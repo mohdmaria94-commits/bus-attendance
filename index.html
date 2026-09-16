@@ -1,248 +1,158 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>حضور الحافلات</title>
-
   <script src="https://unpkg.com/html5-qrcode"></script>
-
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
       padding: 20px;
-      background: #f5f5f5;
+      margin: 0;
+      min-height: 100vh;
+      box-sizing: border-box;
+      background-image: url("bus-background.png");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
     }
-
     h1 {
       margin-bottom: 10px;
     }
-
     #reader {
       width: 100%;
       max-width: 400px;
       margin: 20px auto;
       background: white;
+      border-radius: 15px;
+      overflow: hidden;
     }
-
     #result {
       font-size: 20px;
       line-height: 1.7;
       margin: 20px auto;
       max-width: 400px;
+      background: rgba(255, 255, 255, 0.88);
+      padding: 12px;
+      border-radius: 15px;
     }
-
     button {
       font-size: 20px;
       padding: 15px 30px;
       border: none;
       border-radius: 10px;
+      cursor: pointer;
+      background: white;
+    }
+    button:disabled {
+      opacity: 0.6;
     }
   </style>
 </head>
-
 <body>
-
   <h1>🚌 حضور الحافلات</h1>
-
   <p>اضغطي على تشغيل الكاميرا لمسح QR</p>
-
   <div id="reader"></div>
-
   <div id="result">
     جاهز
   </div>
-
   <button id="startButton">
     📷 تشغيل الكاميرا
   </button>
-
   <script>
-
     var scanner = null;
     var lastScan = "";
     var processing = false;
-
-
     function showResult(message) {
       document.getElementById("result").innerHTML = message;
     }
-
-
     function getStudentId(text) {
-
       text = String(text || "").trim();
-
       if (text.indexOf("?") !== -1) {
-
         var query = text.split("?")[1];
         var parts = query.split("&");
-
         for (var i = 0; i < parts.length; i++) {
-
           var item = parts[i].split("=");
-
           if (item[0] === "id" && item[1]) {
             return decodeURIComponent(item[1]).trim();
           }
         }
       }
-
       return text;
     }
-
-
     function scanSuccess(decodedText) {
-
-      if (processing) {
+      if (processing || !decodedText || lastScan === decodedText) {
         return;
       }
-
-      if (!decodedText) {
-        return;
-      }
-
-      if (lastScan === decodedText) {
-        return;
-      }
-
       lastScan = decodedText;
       processing = true;
-
       showResult("⏳ جاري تسجيل الحضور...");
-
-      var studentId =
-        getStudentId(decodedText);
-
-
+      var studentId = getStudentId(decodedText);
       var requestUrl =
         "https://script.google.com/macros/s/AKfycbzMcDUjm12EJ_XvSl1LIW3gGooOnYHJsQIanBX6caLdmMCVu7Ag0jouqXx3nRuRAb-AIw/exec?id=" +
         encodeURIComponent(studentId);
-
-
       var request = new Image();
-
-
       request.onload = function() {
-
         showResult(
           "✅ تم إرسال الحضور" +
           "<br><br>" +
           "جاهز للطالبة التالية"
         );
-
-
         setTimeout(function() {
-
           lastScan = "";
           processing = false;
-
         }, 1200);
-
       };
-
-
       request.onerror = function() {
-
         showResult(
           "تم إرسال الطلب" +
           "<br><br>" +
           "جاهز للطالبة التالية"
         );
-
-
         setTimeout(function() {
-
           lastScan = "";
           processing = false;
-
         }, 1200);
-
       };
-
-
       request.src =
         requestUrl +
         "&t=" +
         new Date().getTime();
-
     }
-
-
     function startScanner() {
-
       var button =
         document.getElementById("startButton");
-
-
       button.disabled = true;
-
-
-      showResult(
-        "جاري تشغيل الكاميرا..."
-      );
-
-
-      scanner =
-        new Html5Qrcode("reader");
-
-
+      showResult("⏳ جاري تشغيل الكاميرا...");
+      scanner = new Html5Qrcode("reader");
       scanner.start(
-
         {
           facingMode: "environment"
         },
-
         {
           fps: 10,
           qrbox: 250
         },
-
         scanSuccess
-
       )
-
-
       .then(function() {
-
         showResult(
-
           "📷 الكاميرا تعمل" +
           "<br><br>" +
           "ضعي QR داخل المربع"
-
         );
-
       })
-
-
       .catch(function() {
-
         scanner = null;
-
         button.disabled = false;
-
-        showResult(
-          "❌ لم يتم تشغيل الكاميرا"
-        );
-
+        showResult("❌ لم يتم تشغيل الكاميرا");
       });
-
     }
-
-
     document
       .getElementById("startButton")
-      .addEventListener(
-        "click",
-        startScanner
-      );
-
+      .addEventListener("click", startScanner);
   </script>
-
 </body>
-
 </html>

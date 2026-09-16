@@ -6,16 +6,24 @@
   <title>حضور الحافلات</title>
   <script src="https://unpkg.com/html5-qrcode"></script>
   <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100%;
+    }
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      padding: 20px;
-      margin: 0;
+      direction: rtl;
       min-height: 100vh;
       box-sizing: border-box;
-      background-image: url("bus-background-2.png");
+      padding: 20px;
+      background-image: url("./bus-background-2.png");
       background-size: cover;
-      background-position: center;
+      background-position: center center;
+      background-repeat: no-repeat;
       background-attachment: fixed;
     }
     h1 {
@@ -34,7 +42,7 @@
       line-height: 1.7;
       margin: 20px auto;
       max-width: 400px;
-      background: rgba(255, 255, 255, 0.88);
+      background: rgba(255, 255, 255, 0.90);
       padding: 12px;
       border-radius: 15px;
     }
@@ -83,20 +91,13 @@
       return text;
     }
     function scanSuccess(decodedText) {
-      if (processing) {
-        return;
-      }
-      if (!decodedText) {
-        return;
-      }
-      if (lastScan === decodedText) {
+      if (processing || !decodedText || lastScan === decodedText) {
         return;
       }
       lastScan = decodedText;
       processing = true;
       showResult("⏳ جاري تسجيل الحضور...");
-      var studentId =
-        getStudentId(decodedText);
+      var studentId = getStudentId(decodedText);
       var requestUrl =
         "https://script.google.com/macros/s/AKfycbzMcDUjm12EJ_XvSl1LIW3gGooOnYHJsQIanBX6caLdmMCVu7Ag0jouqXx3nRuRAb-AIw/exec?id=" +
         encodeURIComponent(studentId);
@@ -132,11 +133,8 @@
       var button =
         document.getElementById("startButton");
       button.disabled = true;
-      showResult(
-        "⏳ جاري تشغيل الكاميرا..."
-      );
-      scanner =
-        new Html5Qrcode("reader");
+      showResult("⏳ جاري تشغيل الكاميرا...");
+      scanner = new Html5Qrcode("reader");
       scanner.start(
         {
           facingMode: "environment"
@@ -157,17 +155,12 @@
       .catch(function() {
         scanner = null;
         button.disabled = false;
-        showResult(
-          "❌ لم يتم تشغيل الكاميرا"
-        );
+        showResult("❌ لم يتم تشغيل الكاميرا");
       });
     }
     document
       .getElementById("startButton")
-      .addEventListener(
-        "click",
-        startScanner
-      );
+      .addEventListener("click", startScanner);
   </script>
 </body>
 </html>

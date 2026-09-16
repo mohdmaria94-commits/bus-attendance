@@ -60,7 +60,6 @@
     📷 تشغيل الكاميرا
   </button>
 
-
   <script>
 
     var scanner = null;
@@ -110,20 +109,17 @@
         return;
       }
 
-
       lastScan = decodedText;
       processing = true;
 
-
       showResult("⏳ جاري تسجيل الحضور...");
-
 
       var studentId =
         getStudentId(decodedText);
 
 
       var requestUrl =
-        "https://script.google.com/macros/s/AKfycbzky1TIldkdtvU0_RaN3dzZKFmG7OwM8-z2BMUv6LmywAaGfXTpXJb7T5kgMXdyFO0HRg/exec?id=" +
+        "https://script.google.com/macros/s/AKfycbzMcDUjm12EJ_XvSl1LIW3gGooOnYHJsQIanBX6caLdmMCVu7Ag0jouqXx3nRuRAb-AIw/exec?id=" +
         encodeURIComponent(studentId);
 
 
@@ -223,12 +219,11 @@
       })
 
 
-      .catch(function(error) {
+      .catch(function() {
 
         scanner = null;
 
         button.disabled = false;
-
 
         showResult(
           "❌ لم يتم تشغيل الكاميرا"

@@ -13,7 +13,7 @@
       margin: 0;
       min-height: 100vh;
       box-sizing: border-box;
-      background-image: url("bus-background.png");
+      background-image: url("bus-background-2.png");
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
@@ -83,13 +83,20 @@
       return text;
     }
     function scanSuccess(decodedText) {
-      if (processing || !decodedText || lastScan === decodedText) {
+      if (processing) {
+        return;
+      }
+      if (!decodedText) {
+        return;
+      }
+      if (lastScan === decodedText) {
         return;
       }
       lastScan = decodedText;
       processing = true;
       showResult("⏳ جاري تسجيل الحضور...");
-      var studentId = getStudentId(decodedText);
+      var studentId =
+        getStudentId(decodedText);
       var requestUrl =
         "https://script.google.com/macros/s/AKfycbzMcDUjm12EJ_XvSl1LIW3gGooOnYHJsQIanBX6caLdmMCVu7Ag0jouqXx3nRuRAb-AIw/exec?id=" +
         encodeURIComponent(studentId);
@@ -125,8 +132,11 @@
       var button =
         document.getElementById("startButton");
       button.disabled = true;
-      showResult("⏳ جاري تشغيل الكاميرا...");
-      scanner = new Html5Qrcode("reader");
+      showResult(
+        "⏳ جاري تشغيل الكاميرا..."
+      );
+      scanner =
+        new Html5Qrcode("reader");
       scanner.start(
         {
           facingMode: "environment"
@@ -147,12 +157,17 @@
       .catch(function() {
         scanner = null;
         button.disabled = false;
-        showResult("❌ لم يتم تشغيل الكاميرا");
+        showResult(
+          "❌ لم يتم تشغيل الكاميرا"
+        );
       });
     }
     document
       .getElementById("startButton")
-      .addEventListener("click", startScanner);
+      .addEventListener(
+        "click",
+        startScanner
+      );
   </script>
 </body>
 </html>

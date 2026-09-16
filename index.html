@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -121,24 +122,19 @@
         getStudentId(decodedText);
 
 
-      /*
-       مهم:
-       هنا نرسل رقم الطالبة إلى Google Apps Script
-       */
-
-      fetch(
+      var requestUrl =
         "https://script.google.com/macros/s/AKfycbzky1TIldkdtvU0_RaN3dzZKFmG7OwM8-z2BMUv6LmywAaGfXTpXJb7T5kgMXdyFO0HRg/exec?id=" +
-        encodeURIComponent(studentId)
-      )
+        encodeURIComponent(studentId);
 
-      .then(function(response) {
-        return response.text();
-      })
 
-      .then(function(data) {
+      var request = new Image();
+
+
+      request.onload = function() {
 
         showResult(
-          "✅ تم إرسال الحضور<br><br>" +
+          "✅ تم إرسال الحضور" +
+          "<br><br>" +
           "جاهز للطالبة التالية"
         );
 
@@ -148,20 +144,34 @@
           lastScan = "";
           processing = false;
 
-        }, 1500);
+        }, 1200);
 
-      })
+      };
 
-      .catch(function(error) {
+
+      request.onerror = function() {
 
         showResult(
-          "❌ حدث خطأ أثناء التسجيل"
+          "تم إرسال الطلب" +
+          "<br><br>" +
+          "جاهز للطالبة التالية"
         );
 
-        lastScan = "";
-        processing = false;
 
-      });
+        setTimeout(function() {
+
+          lastScan = "";
+          processing = false;
+
+        }, 1200);
+
+      };
+
+
+      request.src =
+        requestUrl +
+        "&t=" +
+        new Date().getTime();
 
     }
 
@@ -171,7 +181,9 @@
       var button =
         document.getElementById("startButton");
 
+
       button.disabled = true;
+
 
       showResult(
         "جاري تشغيل الكاميرا..."
@@ -197,21 +209,26 @@
 
       )
 
+
       .then(function() {
 
         showResult(
+
           "📷 الكاميرا تعمل" +
           "<br><br>" +
           "ضعي QR داخل المربع"
+
         );
 
       })
+
 
       .catch(function(error) {
 
         scanner = null;
 
         button.disabled = false;
+
 
         showResult(
           "❌ لم يتم تشغيل الكاميرا"
@@ -232,4 +249,5 @@
   </script>
 
 </body>
+
 </html>
